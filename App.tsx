@@ -4,7 +4,15 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {Text, TouchableHighlight, View} from 'react-native';
+import {
+  Text,
+  // TouchableHighlight,
+  View,
+  Pressable, // 주로 많이 사용
+  // Button,
+  TouchableNativeFeedback,
+  // TouchableOpacity,
+} from 'react-native';
 import {useCallback} from 'react';
 
 type RootStackParamList = {
@@ -20,11 +28,28 @@ function HomeScreen({navigation}: HomeScreenProps) {
   }, [navigation]);
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <TouchableHighlight onPress={onClick}>
-        <Text>Home Screen</Text>
-      </TouchableHighlight>
-    </View>
+    <>
+      <View
+        style={{
+          flex: 2,
+          backgroundColor: 'yellow',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+        }}>
+        <Pressable
+          onPress={onClick}
+          style={{
+            paddingHorizontal: 20,
+            paddingVertical: 20,
+            backgroundColor: 'blue',
+          }}>
+          <Text style={{color: 'white'}}>Home Screen</Text>
+        </Pressable>
+      </View>
+      <View style={{flex: 5, backgroundColor: 'orange'}}>
+        <Text>Second</Text>
+      </View>
+    </>
   );
 }
 
@@ -35,9 +60,9 @@ function DetailsScreen({navigation}: DetailsScreenProps) {
 
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <TouchableHighlight onPress={onClick}>
+      <TouchableNativeFeedback onPress={onClick}>
         <Text>Details Screen</Text>
-      </TouchableHighlight>
+      </TouchableNativeFeedback>
     </View>
   );
 }
