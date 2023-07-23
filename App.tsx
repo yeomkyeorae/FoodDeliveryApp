@@ -19,6 +19,8 @@ type RootStackParamList = {
   Home: undefined;
   Details: undefined;
 };
+
+// screen에 관한 타입 선언 예시
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>;
 
@@ -28,10 +30,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
   }, [navigation]);
 
   return (
-    <>
+    <View style={{flexDirection: 'row'}}>
       <View
         style={{
-          flex: 2,
+          flex: 5,
           backgroundColor: 'yellow',
           justifyContent: 'center',
           alignItems: 'flex-end',
@@ -46,10 +48,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
           <Text style={{color: 'white'}}>Home Screen</Text>
         </Pressable>
       </View>
-      <View style={{flex: 5, backgroundColor: 'orange'}}>
+      <View style={{flex: 2, backgroundColor: 'orange'}}>
         <Text>Second</Text>
       </View>
-    </>
+    </View>
   );
 }
 
