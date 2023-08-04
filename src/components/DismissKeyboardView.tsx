@@ -7,19 +7,19 @@ import {
   ViewStyle,
   Platform,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 const DismissKeyboardView: React.FC<{
+  // props
+  // style에 대한 props은 암기하는 편이 낫다
   style?: StyleProp<ViewStyle>;
   children: React.ReactNode;
 }> = ({children, ...props}) => (
   // accessible false는 (시각) 장애인을 위한 스크린 리더기에게 불필요한 버튼임을 알리는 것
   <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <KeyboardAvoidingView
-      {...props}
-      behavior={Platform.OS === 'android' ? 'position' : 'padding'}
-      style={props.style}>
+    <KeyboardAwareScrollView {...props} style={props.style}>
       {children}
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   </TouchableWithoutFeedback>
 );
 
