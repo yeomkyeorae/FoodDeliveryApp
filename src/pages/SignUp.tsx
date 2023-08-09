@@ -1,5 +1,6 @@
 import React, {useCallback, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Platform,
   Pressable,
@@ -11,11 +12,12 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../AppInner';
 import DismissKeyboardView from '../components/DismissKeyboardView';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 function SignUp({navigation}: SignUpScreenProps) {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +35,10 @@ function SignUp({navigation}: SignUpScreenProps) {
     setPassword(text.trim());
   }, []);
   const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+
     if (!email || !email.trim()) {
       return Alert.alert('알림', '이메일을 입력해주세요.');
     }
@@ -58,10 +64,27 @@ function SignUp({navigation}: SignUpScreenProps) {
 
     console.log(email, name, password);
     try {
-      const response = await axios.post('/user', {email, name, password});
+      setLoading(true);
+      const response = await axios.post(
+        '/user',
+        {email, name, password},
+        {
+          // 헤더를 사용해 서버에서의 안전 장치를 마련하도록 할 수 있다.
+          // 예) 동일 토큰의 동시 요청이면 쳐낸다 등...
+          headers: {
+            token: '고유한 값',
+          },
+        },
+      );
+      Alert.alert('알림', '회원가입이 완료되었습니다.');
     } catch (error) {
-      console.error(error.response);
+      const errorResponse = (error as AxiosError).response;
+      console.error(errorResponse);
+      if (errorResponse) {
+        Alert.alert('알림', errorResponse.data.message);
+      }
     } finally {
+      setLoading(false);
     }
 
     Alert.alert('알림', '회원가입 되었습니다.');
@@ -126,9 +149,13 @@ function SignUp({navigation}: SignUpScreenProps) {
               ? StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
               : styles.loginButton
           }
-          disabled={!canGoNext}
+          disabled={!canGoNext || loading}
           onPress={onSubmit}>
-          <Text style={styles.loginButtonText}>회원가입</Text>
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={styles.loginButtonText}>회원가입</Text>
+          )}
         </Pressable>
       </View>
     </DismissKeyboardView>
