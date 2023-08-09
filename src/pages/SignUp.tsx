@@ -13,6 +13,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../AppInner';
 import DismissKeyboardView from '../components/DismissKeyboardView';
 import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 
 type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -24,6 +25,8 @@ function SignUp({navigation}: SignUpScreenProps) {
   const emailRef = useRef<TextInput | null>(null);
   const nameRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
+
+  console.log('URL: ', Config.API_URL);
 
   const onChangeEmail = useCallback((text: string) => {
     setEmail(text.trim());
@@ -65,15 +68,16 @@ function SignUp({navigation}: SignUpScreenProps) {
     console.log(email, name, password);
     try {
       setLoading(true);
+      // localhost 대체 10.0.2.2(emulator)
       const response = await axios.post(
-        '/user',
+        `${Config.API_URL}/user`,
         {email, name, password},
         {
           // 헤더를 사용해 서버에서의 안전 장치를 마련하도록 할 수 있다.
           // 예) 동일 토큰의 동시 요청이면 쳐낸다 등...
-          headers: {
-            token: '고유한 값',
-          },
+          // headers: {
+          //   token: '고유한 값',
+          // },
         },
       );
       Alert.alert('알림', '회원가입이 완료되었습니다.');
