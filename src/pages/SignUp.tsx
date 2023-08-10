@@ -26,8 +26,6 @@ function SignUp({navigation}: SignUpScreenProps) {
   const nameRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
 
-  console.log('URL: ', Config.API_URL);
-
   const onChangeEmail = useCallback((text: string) => {
     setEmail(text.trim());
   }, []);
@@ -65,7 +63,6 @@ function SignUp({navigation}: SignUpScreenProps) {
       );
     }
 
-    console.log(email, name, password);
     try {
       setLoading(true);
       // localhost 대체 10.0.2.2(emulator)
@@ -80,7 +77,10 @@ function SignUp({navigation}: SignUpScreenProps) {
           // },
         },
       );
+
       Alert.alert('알림', '회원가입이 완료되었습니다.');
+
+      navigation.navigate('SignIn');
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       console.error(errorResponse);
@@ -90,9 +90,7 @@ function SignUp({navigation}: SignUpScreenProps) {
     } finally {
       setLoading(false);
     }
-
-    Alert.alert('알림', '회원가입 되었습니다.');
-  }, [email, name, password]);
+  }, [navigation, email, name, password]);
 
   const canGoNext = email && name && password;
   return (
