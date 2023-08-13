@@ -65,7 +65,8 @@ function SignUp({navigation}: SignUpScreenProps) {
 
     try {
       setLoading(true);
-      // localhost 대체 10.0.2.2(emulator)
+      // localhost 대체 10.0.2.2(emulator, android)
+      console.log(Config.API_URL);
       const response = await axios.post(
         `${Config.API_URL}/user`,
         {email, name, password},
@@ -83,7 +84,7 @@ function SignUp({navigation}: SignUpScreenProps) {
       navigation.navigate('SignIn');
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
-      console.error(errorResponse);
+      console.error(errorResponse, error);
       if (errorResponse) {
         Alert.alert('알림', errorResponse.data.message);
       }
