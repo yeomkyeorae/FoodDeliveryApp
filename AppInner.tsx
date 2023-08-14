@@ -16,6 +16,7 @@ import userSlice from './src/slices/user';
 import Config from 'react-native-config';
 import {Alert} from 'react-native';
 import axios, {AxiosError} from 'axios';
+import orderSlice from './src/slices/order';
 
 export type LoggedInParamList = {
   Orders: undefined;
@@ -41,20 +42,21 @@ function AppInner() {
   const [socket, disconnect] = useSocket();
 
   useEffect(() => {
-    const helloCallback = (data: any) => {
+    const callback = (data: any) => {
       console.log(data);
+      dispatch(orderSlice.actions.addOrder(data));
     };
     if (socket && isLoggedIn) {
       socket.emit('acceptOrder', 'hello'); // 소켓에 전송할 때: emit
-      socket.on('order', helloCallback); // 소켓으로부터 받을 때
+      socket.on('order', callback); // 소켓으로부터 받을 때
     }
     return () => {
       // clean-up
       if (socket) {
-        socket.off('hello', helloCallback); // 소켓 통신 그만하기
+        socket.off('hello', callback); // 소켓 통신 그만하기
       }
     };
-  }, [isLoggedIn, socket]);
+  }, [dispatch, isLoggedIn, socket]);
 
   useEffect(() => {
     if (!isLoggedIn) {
