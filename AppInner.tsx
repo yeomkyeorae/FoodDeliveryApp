@@ -37,6 +37,43 @@ function AppInner() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
 
+  useEffect(() => {
+    // axios 인터셉터 기능
+    axios.interceptors.response.use(
+      response => {
+        // 성공 응답 시
+        console.log(response);
+        return response;
+      },
+      async error => {
+        // 실패 응답 시
+        const {
+          config,
+          response: {status},
+        } = error;
+        if (status === 419) {
+          if (error.response.data.code === 'expired') {
+            const originalRequest = config; // 원래 요청 정보는 config에 존재한다.
+            const refreshToken = await EncryptedStorage.getItem('refreshToken');
+            // token refresh 요청
+            const {data} = await axios.post(
+              `${Config.API_URL}/refreshToken`, // token refresh api
+              {},
+              {headers: {authorization: `Bearer ${refreshToken}`}},
+            );
+            // 새로운 토큰 저장
+            dispatch(userSlice.actions.setAccessToken(data.data.accessToken));
+            originalRequest.headers.authorization = `Bearer ${data.data.accessToken}`;
+            // 419로 요청 실패했던 요청 새로운 토큰으로 재요청
+            return axios(originalRequest);
+          }
+        }
+        // 419 이외에는 같은 방식으로 에러 발생하도록
+        return Promise.reject(error);
+      },
+    );
+  }, [dispatch]);
+
   // 소켓
   // 키, 값 형태로 주고 받음
   const [socket, disconnect] = useSocket();

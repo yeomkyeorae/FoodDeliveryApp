@@ -35,6 +35,8 @@ function EachOrder({item}: {item: Order}) {
 
       dispatch(orderSlice.actions.acceptOrder(item.orderId));
 
+      setLoading(false);
+
       navigation.navigate('Delivery');
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
@@ -43,7 +45,6 @@ function EachOrder({item}: {item: Order}) {
         Alert.alert('알림', errorResponse.data.message);
         dispatch(orderSlice.actions.rejectOrder(item.orderId));
       }
-    } finally {
       setLoading(false);
     }
   }, [accessToken, navigation, dispatch, item.orderId]);
