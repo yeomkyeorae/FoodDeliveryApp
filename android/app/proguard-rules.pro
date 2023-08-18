@@ -9,4 +9,4 @@
 
 # Add any project specific keep options here:
 
--keep class com.fooddeliveryapp.BuildConfig { *; }
+-keep class com.yeomy.fooddeliveryapp.BuildConfig { *; }
