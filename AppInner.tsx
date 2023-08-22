@@ -17,6 +17,7 @@ import Config from 'react-native-config';
 import {Alert} from 'react-native';
 import axios, {AxiosError} from 'axios';
 import orderSlice from './src/slices/order';
+import usePermissions from './src/hooks/usePermissions';
 
 export type LoggedInParamList = {
   Orders: undefined;
@@ -37,12 +38,13 @@ function AppInner() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
 
+  usePermissions();
+
   useEffect(() => {
     // axios 인터셉터 기능
     axios.interceptors.response.use(
       response => {
         // 성공 응답 시
-        console.log(response);
         return response;
       },
       async error => {
